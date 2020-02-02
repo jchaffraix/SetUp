@@ -1,11 +1,13 @@
+import os
 import platform
 import subprocess
-import os
+import sys
 
 # TODO: Add flags for these.
 # Configurable variables.
 # TODO: Windows?
-PATH=os.path.expanduser('~/Tools')
+HOME=os.path.expanduser('~')
+TOOLS='Tools'
 DEBUG = True
 
 # Non-configurable variables.
@@ -20,7 +22,7 @@ def _RunCommand(command):
     return (process.returncode, process.stdout.read().strip())
 
 def install_software_deps():
-  print("Installing deps")
+  print("✨ Installing deps")
   platform_os = platform.system()
   if platform_os == 'Linux':
     # We only support Debian based packet managers.
@@ -33,16 +35,48 @@ def install_software_deps():
   else:
     print("Unknown OS %s" % platform_os)
 
-def install_config():
-  print("Installing configs")
-  # Create the path and git clone into it.
-  os.makedirs(PATH, exist_ok=True)
-  _RunCommand(['git', 'clone', REMOTE, PATH])
+def install_config_file(path, tools, config):
+  # Check if the path exists.
+  name = config.split("/")[-1]
+  # TODO: This is inspired by Linux and won't work
+  # on Windows.
+  dst = path + "/." + name
+  print(dst)
+  if os.path.exists(dst):
+    while True:
+      print("File exist %s: Overwrite/Skip/Exit [ose]: " % dst)
+      answer = input()
+      if answer in ["e", "E"]:
+        print("💥 Exiting...")
+        sys.exit(-1)
+      if answer in ["s", "S"]:
+        print("🚨 Skipping %s" % dst)
+        return
+      if answer in ["o", "O"]:
+        os.rename(dst, dst + ".bak")
+        break
 
+      print("🚩 Unknown input. Try again")
+
+  os.symlink(os.path.join(tools, config), dst)
+
+def install_config():
+  print("⚙️  Cloning the configs")
+  # Create the path and git clone into it.
+  clone_path = os.path.join(HOME, TOOLS)
+  #os.makedirs(PATH, exist_ok=True)
+  # TODO: Check if this worked!
+  #_RunCommand(['git', 'clone', REMOTE, clone_path])
+
+  print("🚀 Installing the configs")
+  # TODO: Windows.
+  install_config_file(HOME, TOOLS, "/".join(["configs", "vim", "vimrc"]))
 
 def install():
   install_software_deps()
   install_config()
+  # TODO: We don't look for failures anywhere...
+  print("✅ Install successful")
 
 if __name__ == '__main__':
   install()
