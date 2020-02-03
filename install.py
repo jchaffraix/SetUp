@@ -7,11 +7,11 @@ import sys
 # Configurable variables.
 # TODO: Windows?
 HOME=os.path.expanduser('~')
-TOOLS='Tools'
+SETUP_PATH='SetUp'
 DEBUG = True
 
 # Non-configurable variables.
-REMOTE='git@github.com:jchaffraix/Tools.git'
+REMOTE='git@github.com:jchaffraix/SetUp.git'
 DEPS=['git', 'tmux', 'zsh']
 
 def _RunCommand(command):
@@ -63,14 +63,14 @@ def install_config_file(path, tools, config):
 def install_config():
   print("⚙️  Cloning the configs")
   # Create the path and git clone into it.
-  clone_path = os.path.join(HOME, TOOLS)
+  clone_path = os.path.join(HOME, SETUP_PATH)
   #os.makedirs(PATH, exist_ok=True)
   # TODO: Check if this worked!
   #_RunCommand(['git', 'clone', REMOTE, clone_path])
 
   print("🚀 Installing the configs")
   # TODO: Windows.
-  install_config_file(HOME, TOOLS, "/".join(["configs", "vim", "vimrc"]))
+  install_config_file(HOME, SETUP_PATH, "/".join(["configs", "vim", "vimrc"]))
 
 def install():
   install_software_deps()
