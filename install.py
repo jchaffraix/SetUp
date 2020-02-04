@@ -41,7 +41,7 @@ def install_config_file(path, tools, config):
   # TODO: This is inspired by Linux and won't work
   # on Windows.
   dst = path + "/." + name
-  print(dst)
+  print("📝 Installing file %s" % dst)
   if os.path.exists(dst):
     while True:
       print("File exist %s: Overwrite/Skip/Exit [ose]: " % dst)
@@ -66,11 +66,11 @@ def install_config():
   clone_path = os.path.join(HOME, SETUP_PATH)
   #os.makedirs(PATH, exist_ok=True)
   # TODO: Check if this worked!
-  #_RunCommand(['git', 'clone', REMOTE, clone_path])
+  _RunCommand(['git', 'clone', REMOTE, clone_path])
 
   print("🚀 Installing the configs")
   # TODO: Windows.
-  install_config_file(HOME, SETUP_PATH, "/".join(["configs", "vim", "vimrc"]))
+  install_config_file(HOME, SETUP_PATH, "/".join(["Configs", "git", "gitconfig"]))
 
 def install():
   install_software_deps()
