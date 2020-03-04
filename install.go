@@ -1,18 +1,109 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 )
 
+// TODO: Those should be configurable.
+const setupPath string = "SetUp"
+const verbose bool = true
+
 // Global constants
 var deps = []string{"git", "tmux", "zsh"}
-var githubURL = "git@github.com:jchaffraix/SetUp.git"
+const githubURL string = "git@github.com:jchaffraix/SetUp.git"
 
-// TODO: I should use go-git to fetch git.
+func runCommandInteractively(args []string) error {
+	cmd := exec.Command(args[0], args[1:]...)
+	if verbose {
+		cmd.Stdout = os.Stdout
+	}
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	return cmd.Run()
+}
+
+func installConfigFile(homePath string, relFilePath []string) error {
+	file := relFilePath[len(relFilePath)-1]
+	relFilePathStr := filepath.Join(relFilePath...)
+	destinationPath := filepath.Join(homePath, "." + file)
+	_, err := os.Lstat(destinationPath)
+	fmt.Println(destinationPath)
+	if err == nil {
+		// File exists, give users options.
+		for {
+			reader := bufio.NewReader(os.Stdin)
+			fmt.Println("File exist " + destinationPath + ": Overwrite/Skip/Exit [ose]: ")
+			opt, err := reader.ReadString('\n')
+			if err != nil {
+				return err
+			}
+			switch opt[0] {
+			case 'e':
+				fallthrough
+			case 'E':
+				fmt.Println("💥 Exiting...")
+				os.Exit(-1)
+			case 's':
+				fallthrough
+			case 'S':
+				fmt.Println("🚨 Skipping " + destinationPath)
+				return nil
+			case 'o':
+				fallthrough
+			case 'O':
+				err = os.Rename(destinationPath, destinationPath + ".bak")
+				if err != nil {
+					return err
+				}
+				return os.Symlink(relFilePathStr, destinationPath)
+			default:
+				fmt.Println("🚩 Unknown input. Try again")
+			}
+		}
+	}
+	return os.Symlink(relFilePathStr, destinationPath)
+}
+
+func cloneConfig(homePath, relPath string) error {
+	clonePath := filepath.Join(homePath, relPath)
+	_, err := os.Lstat(clonePath)
+	if err == nil {
+		// TODO: We should probably give options instead of cowardly quitting.
+		return errors.New(clonePath + " is not empty, stopping the script.")
+	}
+	args := []string{"git", "clone", githubURL, clonePath}
+	if err := runCommandInteractively(args); err != nil {
+		return err
+	}
+	return nil
+}
+
+// This script doesn't use go-git as it imports a lot of extra cruft.
+func installConfigFiles(relPath string) error {
+	homePath, err := os.UserHomeDir()
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("⚙️  Cloning the configs")
+	err = cloneConfig(homePath, relPath)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("🚀 Installing the configs")
+	// TODO: Just walk through the 'Configs' directory.
+	relFilePath := []string{relPath}
+	relFilePath = append(relFilePath, "Configs", "git", "gitconfig")
+	installConfigFile(homePath, relFilePath)
+	return nil
+}
 
 func installSoftwareDeps() error {
 	fmt.Println("✨ Installing deps")
@@ -20,19 +111,11 @@ func installSoftwareDeps() error {
 	case "linux":
 		args := []string{"sudo", "apt-get", "install"}
 		args = append(args, deps...)
-		cmd := exec.Command(args[0], args[1:]...)
-		if err := cmd.Run(); err != nil {
-			return err
-		}
-		return nil
+		return runCommandInteractively(args)
 	case "darwin":
 		args := []string{"brew", "install"}
 		args = append(args, deps...)
-		cmd := exec.Command(args[0], args[1:]...)
-		if err := cmd.Run(); err != nil {
-			return err
-		}
-		return nil
+		return runCommandInteractively(args)
 	case "Windows":
 		return errors.New("Can't install missing deps on Windows.")
 	default:
@@ -43,7 +126,12 @@ func installSoftwareDeps() error {
 
 func main() {
 	if err := installSoftwareDeps(); err != nil {
-		fmt.Fprintf(os.Stderr, err.Error())
+		fmt.Fprintf(os.Stderr, err.Error() + "\n")
 		os.Exit(1)
 	}
+	if err := installConfigFiles(setupPath); err != nil {
+		fmt.Fprintf(os.Stderr, err.Error() + "\n")
+		os.Exit(1)
+	}
+	fmt.Println("✅ Install successful")
 }
