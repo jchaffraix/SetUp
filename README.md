@@ -4,7 +4,7 @@ Personal tools and config to set-up new machines and get up to speed fast.
 
 # Installation
 
-python3 curl -O https://raw.githubusercontent.com/jchaffraix/Tools/master/install.py`
+go run `curl -O https://raw.githubusercontent.com/jchaffraix/Tools/master/install.py`
 
 # Organization
 
