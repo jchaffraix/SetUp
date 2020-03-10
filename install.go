@@ -15,8 +15,9 @@ const setupPath string = "SetUp"
 const verbose bool = true
 
 // Global constants
-var deps = []string{"git", "tmux", "zsh"}
+var deps = []string{"git", "tmux", "vim", "zsh"}
 const githubURL string = "git@github.com:jchaffraix/SetUp.git"
+const vimSensibleURL string = "https://tpope.io/vim/sensible.git"
 
 func runCommandInteractively(args []string) error {
 	cmd := exec.Command(args[0], args[1:]...)
@@ -85,14 +86,9 @@ func cloneConfig(homePath, relPath string) error {
 }
 
 // This script doesn't use go-git as it imports a lot of extra cruft.
-func installConfigFiles(relPath string) error {
-	homePath, err := os.UserHomeDir()
-	if err != nil {
-		return err
-	}
-
+func installConfigFiles(homePath, relPath string) error {
 	fmt.Println("⚙️  Cloning the configs")
-	err = cloneConfig(homePath, relPath)
+	err := cloneConfig(homePath, relPath)
 	if err != nil {
 		return err
 	}
@@ -141,12 +137,35 @@ func installSoftwareDeps() error {
 	panic("Missing return in installSoftwareDeps, os = " + runtime.GOOS)
 }
 
+func installVimPlugins(homePath, setupPath string) error {
+	path := []string{homePath, ".vim", "pack", "tpope", "start"}
+	pathStr := filepath.Join(path...)
+	if err := os.MkdirAll(pathStr, 0755); err != nil {
+		return err
+	}
+	args := []string{"git", "clone", vimSensibleURL, pathStr}
+	if err := runCommandInteractively(args); err != nil {
+		return err
+	}
+	return nil
+}
+
 func main() {
+	homePath, err := os.UserHomeDir()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Couldn't get $HOME directory: " + err.Error() + "\n")
+		os.Exit(1)
+	}
+
 	if err := installSoftwareDeps(); err != nil {
 		fmt.Fprintf(os.Stderr, err.Error() + "\n")
 		os.Exit(1)
 	}
-	if err := installConfigFiles(setupPath); err != nil {
+	if err := installConfigFiles(homePath, setupPath); err != nil {
+		fmt.Fprintf(os.Stderr, err.Error() + "\n")
+		os.Exit(1)
+	}
+	if err := installVimPlugins(homePath, setupPath); err != nil {
 		fmt.Fprintf(os.Stderr, err.Error() + "\n")
 		os.Exit(1)
 	}
