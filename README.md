@@ -9,7 +9,7 @@ go run `curl -O https://raw.githubusercontent.com/jchaffraix/Tools/master/instal
 # Organization
 
 - Config/
-Contains all the configs, each directory should correspond to a different program.
+Contains all the configs under the directory with special configs under their own directories.
 
 - Tools/
 Tooling for my workflows.

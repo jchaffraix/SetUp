@@ -33,7 +33,7 @@ func installConfigFile(homePath string, relFilePath []string) error {
 	relFilePathStr := filepath.Join(relFilePath...)
 	destinationPath := filepath.Join(homePath, "." + file)
 	_, err := os.Lstat(destinationPath)
-	fmt.Println(destinationPath)
+	fmt.Println("Installing: ", destinationPath)
 	if err == nil {
 		// File exists, give users options.
 		for {
@@ -100,7 +100,7 @@ func installConfigFiles(relPath string) error {
 	fmt.Println("🚀 Installing the configs")
 	// TODO: Just walk through the 'Configs' directory.
 	relFilePath := []string{relPath}
-	relFilePath = append(relFilePath, "Configs", "git", "gitconfig")
+	relFilePath = append(relFilePath, "Configs", "gitconfig")
 	installConfigFile(homePath, relFilePath)
 	return nil
 }
