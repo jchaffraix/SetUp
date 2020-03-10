@@ -98,10 +98,27 @@ func installConfigFiles(relPath string) error {
 	}
 
 	fmt.Println("🚀 Installing the configs")
-	// TODO: Just walk through the 'Configs' directory.
-	relFilePath := []string{relPath}
-	relFilePath = append(relFilePath, "Configs", "gitconfig")
-	installConfigFile(homePath, relFilePath)
+	relConfigPath := []string{relPath, "Configs"}
+	absFilePath := append([]string{homePath}, relConfigPath...)
+	dir, err := os.Open(filepath.Join(absFilePath...))
+	if err != nil {
+		return err
+	}
+	// -1 makes Readdir read all the entries in the directory.
+	fileInfos, err := dir.Readdir(-1)
+	dir.Close()
+	if err != nil {
+		return err
+	}
+	for _, fileInfo := range fileInfos {
+		if fileInfo.IsDir() {
+			continue;
+		}
+		// |fileInfo| is just the last part of the path.
+		// So we reconstruct the path relative to |homePath|.
+		file := append(relConfigPath, fileInfo.Name())
+		installConfigFile(homePath, file)
+	}
 	return nil
 }
 
