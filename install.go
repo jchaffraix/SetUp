@@ -30,17 +30,21 @@ func runCommandInteractively(args []string) error {
 	return cmd.Run()
 }
 
+func pathExists(path string) bool {
+	_, err := os.Lstat(path)
+	return err == nil
+}
+
 func installConfigFile(homePath string, relFilePath []string) error {
 	file := relFilePath[len(relFilePath)-1]
 	relFilePathStr := filepath.Join(relFilePath...)
 	destinationPath := filepath.Join(homePath, "." + file)
-	_, err := os.Lstat(destinationPath)
 	fmt.Println("Installing: ", destinationPath)
-	if err == nil {
+	if pathExists(destinationPath) {
 		// File exists, give users options.
 		for {
 			reader := bufio.NewReader(os.Stdin)
-			fmt.Println("File exist " + destinationPath + ": Overwrite/Skip/Exit [ose]: ")
+			fmt.Print("File exist " + destinationPath + ": Overwrite/Skip/Exit [ose]: ")
 			opt, err := reader.ReadString('\n')
 			if err != nil {
 				return err
@@ -141,6 +145,13 @@ func installSoftwareDeps() error {
 func installVimPlugins(homePath, setupPath string) error {
 	path := []string{homePath, ".vim", "pack", "tpope", "start"}
 	pathStr := filepath.Join(path...)
+	// Sanity check: Does the path exists?
+	// This is required as MkdirAll doesn't return an error
+	// if it does, but git will.
+	if pathExists(pathStr) {
+		fmt.Println("Skipping vim-sensible as path exists")
+		return nil
+	}
 	if err := os.MkdirAll(pathStr, 0755); err != nil {
 		return err
 	}
