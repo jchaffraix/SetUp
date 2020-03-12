@@ -4,15 +4,16 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"flag"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 )
 
-// TODO: Those should be configurable.
-const setupPath string = "SetUp"
-const verbose bool = true
+// Configurable constants (flags).
+var setupPath string
+var verbose bool
 
 // Global constants
 var deps = []string{"git", "tmux", "vim", "zsh"}
@@ -151,6 +152,10 @@ func installVimPlugins(homePath, setupPath string) error {
 }
 
 func main() {
+	flag.BoolVar(&verbose, "verbose", false, "toggle verbose mode")
+	flag.StringVar(&setupPath, "setup_path", "SetUp", "installation path")
+	flag.Parse()
+
 	homePath, err := os.UserHomeDir()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Couldn't get $HOME directory: " + err.Error() + "\n")
