@@ -1,0 +1,44 @@
+# Term colors.
+# See http://ascii-table.com/ansi-escape-sequences.php
+COLOR_DOMAIN="\[\033[1;32m\]" # bold green
+COLOR_PATH="\[\033[1;34m\]"   # bold blue
+COLOR_BRANCH="\[\033[1;33m\]" # yellow
+COLOR_DOLLAR="\[\033[0;37m\]" # white
+COLOR_NONE="\[\033[0m\]"      # reset
+export PS1="$COLOR_DOMAIN\u@\h:$COLOR_PATH\w$COLOR_BRANCH \$(git rev-parse --abbrev-ref HEAD 2> /dev/null) $COLOR_DOLLAR\$$COLOR_NONE "
+
+# Common directories.
+export TOOLS=$HOME/Tools/
+export SOURCES=$HOME/Projects/
+
+# VIM.
+export EDITOR="vim"
+
+# General aliases.
+alias sl='ls'
+
+# Git aliases.
+alias gco="git-co"
+alias gcm="git checkout master"
+alias grbc="git rebase --continue"
+alias grba="git rebase --abort"
+
+alias glb="git lb"
+alias gd="git diff"
+alias gdm="git diff master"
+
+alias gca="git commit --amend"
+alias gcaa="git commit --amend -a"
+
+alias gg="git grep"
+
+function git_grep_to_vim() {
+    if [ -z $1 ]
+    then
+        echo "Usage: git_grep_to_vim pattern"
+        return 1
+    fi
+
+    vim `git grep -l $1`
+}
+alias vig=git_grep_to_vim
