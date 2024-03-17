@@ -4,7 +4,7 @@ Personal tools and config to set-up new machines and get up to speed fast.
 
 # Installation
 
-go run `curl -O https://raw.githubusercontent.com/jchaffraix/Tools/master/install.py`
+wget -r -O /tmp/install.go https://raw.githubusercontent.com/jchaffraix/SetUp/master/install.go && go run /tmp/install.go
 
 # Organization
 
