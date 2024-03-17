@@ -80,8 +80,9 @@ func cloneConfig(homePath, relPath string) error {
 	clonePath := filepath.Join(homePath, relPath)
 	_, err := os.Lstat(clonePath)
 	if err == nil {
-		// TODO: We should probably give options instead of cowardly quitting.
-		return errors.New(clonePath + " is not empty, stopping the script.")
+		// TODO: We should probably give an option instead of assuming it is fine.
+		fmt.Println("🚨 " + clonePath + " is not empty, skipping git clone.")
+		return nil
 	}
 	args := []string{"git", "clone", githubURL, clonePath}
 	if err := runCommandInteractively(args); err != nil {
