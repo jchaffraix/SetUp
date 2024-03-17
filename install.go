@@ -164,7 +164,7 @@ func installVimPlugins(homePath, setupPath string) error {
 
 func main() {
 	flag.BoolVar(&verbose, "verbose", false, "toggle verbose mode")
-	flag.StringVar(&setupPath, "setup_path", "SetUp", "installation path")
+	flag.StringVar(&setupPath, "setup_path", "Projects/SetUp", "installation path")
 	flag.Parse()
 
 	homePath, err := os.UserHomeDir()
