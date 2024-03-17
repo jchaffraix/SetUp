@@ -127,7 +127,7 @@ func installSoftwareDeps() error {
 	fmt.Println("✨ Installing deps")
 	switch runtime.GOOS {
 	case "linux":
-		args := []string{"sudo", "apt-get", "install"}
+		args := []string{"sudo", "apt-get", "install", "-y"}
 		args = append(args, deps...)
 		return runCommandInteractively(args)
 	case "darwin":
