@@ -42,3 +42,8 @@ function git_grep_to_vim() {
     vim `git grep -l $1`
 }
 alias vig=git_grep_to_vim
+
+# Enable ccache by putting it early in the path.
+export PATH="/usr/lib/ccache:$PATH"
+
+export PATH="${HOME}/deps/bin:$PATH"
