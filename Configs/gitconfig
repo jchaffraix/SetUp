@@ -1,9 +1,20 @@
 [user]
   name = Julien Chaffraix
   email = julien.chaffraix@gmail.com
+  signingKey = ~/.ssh/id_rsa.pub
+[gpg]
+  format = ssh
 [color]
   ui = 1
 [push]
   default = simple
 [pager]
   branch = false
+[branch]
+  sort = -committerdate
+[alias]
+  p = push
+  fp = push --force-with-lease
+  rs = reset
+  rbc = rebase --continue
+  rba = rebase --abort
