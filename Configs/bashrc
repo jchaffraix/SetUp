@@ -18,12 +18,13 @@ export EDITOR="vim"
 alias sl='ls'
 
 # Git aliases.
-alias gco="git-co"
+alias gup="git pull -r"
+alias gco="git checkout"
 alias gcm="git checkout master"
 alias grbc="git rebase --continue"
 alias grba="git rebase --abort"
 
-alias glb="git lb"
+alias glb="git branch -a"
 alias gd="git diff"
 alias gdm="git diff master"
 
