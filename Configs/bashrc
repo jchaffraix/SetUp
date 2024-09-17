@@ -15,7 +15,7 @@ export SOURCES=$HOME/Projects/
 export EDITOR="vim"
 
 # General aliases.
-alias sl='ls'
+alias sl="ls"
 
 # Git aliases.
 alias gup="git pull -r"
