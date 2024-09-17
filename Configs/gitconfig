@@ -2,10 +2,16 @@
   name = Julien Chaffraix
   email = julien.chaffraix@gmail.com
   signingKey = ~/.ssh/id_rsa.pub
-[gpg]
-  format = ssh
+[commit]
+	verbose = true
 [color]
   ui = 1
+[init]
+	defaultBranch = main
+[help]
+	autocorrect = prompt
+[pull]
+	rebase = true
 [push]
   default = simple
 [pager]
@@ -18,3 +24,5 @@
   rs = reset
   rbc = rebase --continue
   rba = rebase --abort
+[gpg]
+  format = ssh
