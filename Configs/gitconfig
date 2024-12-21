@@ -1,7 +1,6 @@
 [user]
   name = Julien Chaffraix
   email = julien.chaffraix@gmail.com
-  signingKey = ~/.ssh/id_rsa.pub
 [commit]
 	verbose = true
 [color]
@@ -24,5 +23,3 @@
   rs = reset
   rbc = rebase --continue
   rba = rebase --abort
-[gpg]
-  format = ssh
