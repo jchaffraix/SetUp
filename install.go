@@ -3,8 +3,8 @@ package main
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"flag"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -13,10 +13,12 @@ import (
 
 // Configurable constants (flags).
 var setupPath string
+var noRoot bool
 var verbose bool
 
 // Global constants
 var deps = []string{"git", "tmux", "vim", "zsh"}
+
 const githubURL string = "git@github.com:jchaffraix/SetUp.git"
 const vimSensibleURL string = "https://tpope.io/vim/sensible.git"
 
@@ -38,7 +40,7 @@ func pathExists(path string) bool {
 func installConfigFile(homePath string, relFilePath []string) error {
 	file := relFilePath[len(relFilePath)-1]
 	relFilePathStr := filepath.Join(relFilePath...)
-	destinationPath := filepath.Join(homePath, "." + file)
+	destinationPath := filepath.Join(homePath, "."+file)
 	fmt.Println("Installing: ", destinationPath)
 	if pathExists(destinationPath) {
 		// File exists, give users options.
@@ -63,7 +65,7 @@ func installConfigFile(homePath string, relFilePath []string) error {
 			case 'o':
 				fallthrough
 			case 'O':
-				err = os.Rename(destinationPath, destinationPath + ".bak")
+				err = os.Rename(destinationPath, destinationPath+".bak")
 				if err != nil {
 					return err
 				}
@@ -114,7 +116,7 @@ func installConfigFiles(homePath, relPath string) error {
 	}
 	for _, fileInfo := range fileInfos {
 		if fileInfo.IsDir() {
-			continue;
+			continue
 		}
 		// |fileInfo| is just the last part of the path.
 		// So we reconstruct the path relative to |homePath|.
@@ -126,6 +128,11 @@ func installConfigFiles(homePath, relPath string) error {
 
 func installSoftwareDeps() error {
 	fmt.Println("✨ Installing deps")
+	if noRoot {
+		fmt.Println("  ⚠️  Skipped as --no_root was provided")
+		return nil
+	}
+
 	switch runtime.GOOS {
 	case "linux":
 		args := []string{"sudo", "apt-get", "install", "-y"}
@@ -165,25 +172,26 @@ func installVimPlugins(homePath, setupPath string) error {
 
 func main() {
 	flag.BoolVar(&verbose, "verbose", false, "toggle verbose mode")
+	flag.BoolVar(&noRoot, "no_root", false, "Skip any installations that require root access")
 	flag.StringVar(&setupPath, "setup_path", "Projects/SetUp", "installation path")
 	flag.Parse()
 
 	homePath, err := os.UserHomeDir()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Couldn't get $HOME directory: " + err.Error() + "\n")
+		fmt.Fprintf(os.Stderr, "Couldn't get $HOME directory: "+err.Error()+"\n")
 		os.Exit(1)
 	}
 
 	if err := installSoftwareDeps(); err != nil {
-		fmt.Fprintf(os.Stderr, err.Error() + "\n")
+		fmt.Fprintf(os.Stderr, err.Error()+"\n")
 		os.Exit(1)
 	}
 	if err := installConfigFiles(homePath, setupPath); err != nil {
-		fmt.Fprintf(os.Stderr, err.Error() + "\n")
+		fmt.Fprintf(os.Stderr, err.Error()+"\n")
 		os.Exit(1)
 	}
 	if err := installVimPlugins(homePath, setupPath); err != nil {
-		fmt.Fprintf(os.Stderr, err.Error() + "\n")
+		fmt.Fprintf(os.Stderr, err.Error()+"\n")
 		os.Exit(1)
 	}
 	fmt.Println("✅ Install successful")
