@@ -17,7 +17,7 @@ var noRoot bool
 var verbose bool
 
 // Global constants
-var deps = []string{"git", "tmux", "vim", "zsh"}
+var deps = []string{"git", "git-lfs", "tmux", "vim", "zsh"}
 
 const githubURL string = "git@github.com:jchaffraix/SetUp.git"
 const vimSensibleURL string = "https://tpope.io/vim/sensible.git"
