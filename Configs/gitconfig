@@ -3,6 +3,7 @@
   email = julien.chaffraix@gmail.com
 [commit]
 	verbose = true
+	gpgsign = true
 [color]
   ui = 1
 [init]

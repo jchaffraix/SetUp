@@ -194,5 +194,12 @@ func main() {
 		fmt.Fprintf(os.Stderr, err.Error()+"\n")
 		os.Exit(1)
 	}
-	fmt.Println("✅ Install successful")
+	fmt.Println(`✅ Install successful
+
+⚠️  Remember to set up git signing
+
+You will need to copy the old key under $HOME/.gnupg/pubring.kbx or generate a new one and add it.
+
+See GitHub's instructions: https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits
+`)
 }
