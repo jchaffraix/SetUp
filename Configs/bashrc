@@ -18,9 +18,18 @@ export EDITOR="vim"
 alias sl="ls"
 
 # Git aliases.
+function git_check_main() {
+  local master_branch=$(git branch --list|grep "master")
+  if [[ -n "${master_branch}" ]]; then
+    git checkout master
+  else
+    git checkout main
+  fi
+}
+
 alias gup="git pull -r"
 alias gco="git checkout"
-alias gcm="git checkout master"
+alias gcm=git_check_main
 alias grbc="git rebase --continue"
 alias grba="git rebase --abort"
 
