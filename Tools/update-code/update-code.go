@@ -123,7 +123,7 @@ func main() {
 		fmt.Println("Latest version: " + latestVersion)
 	}
 
-	if strings.Compare(curVersion, latestVersion) > 1 {
+	if strings.Compare(curVersion, latestVersion) < 1 {
 		fName, err := downloadVSCode(latestVersion)
 		defer os.Remove(fName)
 		if err != nil {
