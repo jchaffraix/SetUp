@@ -1,0 +1,11 @@
+{
+    "workbench.colorTheme": "Dark Modern",
+    "editor.renderWhitespace": "all",
+    "latex-workshop.docker.path": "podman",
+    "asciidoc.preview.asciidoctorAttributes": {
+    },
+    "python.analysis.typeCheckingMode": "strict",
+    "chat.disableAIFeatures": true,
+    // Disable telemetry as it gathers user data (Colab warning).
+    "telemetry.telemetryLevel": "off"
+}

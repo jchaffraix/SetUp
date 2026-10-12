@@ -37,11 +37,9 @@ func pathExists(path string) bool {
 	return err == nil
 }
 
-func installConfigFile(homePath string, relFilePath []string) error {
-	file := relFilePath[len(relFilePath)-1]
+func installConfigFile(destinationPath string, relFilePath []string) error {
 	relFilePathStr := filepath.Join(relFilePath...)
-	destinationPath := filepath.Join(homePath, "."+file)
-	fmt.Println("Installing: ", destinationPath)
+	fmt.Println("Installing ", destinationPath)
 	if pathExists(destinationPath) {
 		// File exists, give users options.
 		for {
@@ -121,8 +119,14 @@ func installConfigFiles(homePath, relPath string) error {
 		// |fileInfo| is just the last part of the path.
 		// So we reconstruct the path relative to |homePath|.
 		file := append(relConfigPath, fileInfo.Name())
-		installConfigFile(homePath, file)
+		destinationPath := filepath.Join(homePath, "."+fileInfo.Name())
+		installConfigFile(destinationPath, file)
 	}
+
+	// Handle VSCode user config as it goes to a specific path.
+	absVSCodeConfigPath := append([]string{homePath, relPath, "Configs", "Code", "settings.json"})
+	destinationPath := filepath.Join(homePath, ".config", "Code", "User", "settings.json")
+	installConfigFile(destinationPath, absVSCodeConfigPath)
 	return nil
 }
 
