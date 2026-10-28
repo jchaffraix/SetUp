@@ -21,7 +21,7 @@ func runCommandInteractively(args []string) ([]byte, error) {
 	cmd.Stdin = os.Stdin
 	output, err := cmd.Output()
 	if verbose {
-		fmt.Println("Running `" + strings.Join(args, " ") + "`: " + string(output))
+		fmt.Println("Ran `" + strings.Join(args, " ") + "`: " + string(output))
 	}
 	return output, err
 }
@@ -97,6 +97,7 @@ func downloadVSCode(latestVersion string) (string, error) {
 }
 
 func installVSCode(fName string) error {
+	fmt.Println("Requesting permission to install (sudo)")
 	_, err := runCommandInteractively([]string{"sudo", "dpkg", "-i", fName})
 	return err
 }
